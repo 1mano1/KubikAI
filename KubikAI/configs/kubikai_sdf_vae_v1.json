@@ -1,0 +1,40 @@
+{
+    "models": {
+        "sdf_vae": {
+            "name": "KubikAI.models.sdf_vae.SdfVAE",
+            "args": {
+                "latent_dim": 256,
+                "num_points": 16384,
+                "resolution": 16
+            }
+        }
+    },
+    "dataset": {
+        "name": "KubikAI.datasets.sdf_dataset.SdfDataset",
+        "args": {
+            "num_samples": 16384
+        }
+    },
+    "trainer": {
+        "name": "KubikAI.trainers.sdf_vae_trainer.SdfVaeTrainer",
+        "args": {
+            "max_steps": 1000000,
+            "batch_size_per_gpu": 2,
+            "optimizer": {
+                "name": "AdamW",
+                "args": {
+                    "lr": 1e-4,
+                    "weight_decay": 0.0
+                }
+            },
+            "ema_rate": [0.999],
+            "fp16_mode": "amp",
+            "grad_clip": 1.0,
+            "i_log": 100,
+            "i_sample": 1000,
+            "i_save": 1000,
+            "lambda_kl": 0.001,
+            "lambda_recon": 1.0
+        }
+    }
+}

@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.venv/
+venv/
+
+# Project Specific
+outputs/
+processed_datasets/
+encoded_datasets/
+*.log
+*.npz
+*.pt
+*.ply
+*.obj
+*.zip
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation
+KubikAI_Plan.md
+
+# Temporary Images
+!test_view_1.png
+!test_view_2.png
+!test_view_3.png

@@ -1,0 +1,20 @@
+# --- CUDA-Enabled PyTorch ---
+# The following torch and torchvision versions are for a specific CUDA version.
+# For Kaggle or other environments, you SHOULD use the pre-installed PyTorch.
+# torch==2.10.0+cu126
+# torchvision==0.25.0+cu126
+
+# --- Core Dependencies ---
+easydict==1.13
+numpy==2.4.2
+Pillow==12.1.1
+pyrender==0.1.45
+scipy==1.17.0
+tqdm==4.67.3
+trimesh==4.11.1
+
+# --- Optional High-Performance Attention Backends ---
+# The project is configured to use PyTorch's built-in attention (sdpa),
+# but these can be enabled for potentially better performance if installed.
+# flash_attn==2.8.3
+# xformers==0.0.34
