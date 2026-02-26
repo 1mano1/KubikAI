@@ -82,11 +82,16 @@ def render_views_with_pyrender(args, obj_path, output_dir):
         mesh = pyrender.Mesh.from_trimesh(scene_or_mesh, smooth=True)
         pyrender_scene.add(mesh)
 
-    # --- 3. Setup Camera and Lighting ---
+    # --- 3. Setup Camera and Lighting (3-Point Setup) ---
     fov = 40 / 180 * np.pi
     cam = pyrender.PerspectiveCamera(yfov=fov, aspectRatio=1.0)
     
-    light = pyrender.DirectionalLight(color=[1.0, 1.0, 1.0], intensity=5.0)
+    # Key Light (Main illumination)
+    key_light = pyrender.DirectionalLight(color=[1.0, 1.0, 1.0], intensity=4.0)
+    # Fill Light (Softer, from the opposite side to reduce harsh shadows)
+    fill_light = pyrender.DirectionalLight(color=[0.8, 0.9, 1.0], intensity=2.0)
+    # Back Light (Rim light to separate object from background)
+    back_light = pyrender.DirectionalLight(color=[1.0, 1.0, 0.8], intensity=3.0)
     
     # --- 4. Render Views ---
     r = pyrender.OffscreenRenderer(args.resolution, args.resolution)
@@ -122,10 +127,28 @@ def render_views_with_pyrender(args, obj_path, output_dir):
         cam_pose[:3, 2] = forward
         cam_pose[:3, 3] = camera_location
         
-        pyrender_scene.add(cam, pose=cam_pose)
-        pyrender_scene.add(light, pose=cam_pose)
+        cam_node = pyrender_scene.add(cam, pose=cam_pose)
+        
+        # 3-Point Lighting relative to the camera
+        key_pose = cam_pose.copy()
+        key_pose[:3, 3] = camera_location + right * 1.5 + up * 1.0
+        key_node = pyrender_scene.add(key_light, pose=key_pose)
+        
+        fill_pose = cam_pose.copy()
+        fill_pose[:3, 3] = camera_location - right * 1.5 - up * 0.5
+        fill_node = pyrender_scene.add(fill_light, pose=fill_pose)
+        
+        back_pose = cam_pose.copy()
+        back_pose[:3, 3] = -camera_location # Behind the object
+        back_node = pyrender_scene.add(back_light, pose=back_pose)
 
         color, _ = r.render(pyrender_scene, flags=pyrender.RenderFlags.RGBA)
+
+        # Cleanup nodes for the next frame
+        pyrender_scene.remove_node(cam_node)
+        pyrender_scene.remove_node(key_node)
+        pyrender_scene.remove_node(fill_node)
+        pyrender_scene.remove_node(back_node)
 
         img = Image.fromarray(color, 'RGBA')
         img_path = os.path.join(output_dir, f'{i:03d}.png')
