@@ -50,19 +50,22 @@ class SdfEncoder(nn.Module):
 
         self.aggregator = nn.Sequential(
             nn.Linear(256, 512), 
-            nn.ReLU(),
+            nn.GELU(),
             nn.Linear(512, 512),
-            nn.ReLU(),
+            nn.GELU(),
         )
 
         # Map to a small 4x4x4 seed grid
         self.fc_seed = nn.Linear(512, latent_dim * 4 * 4 * 4)
         
-        # Use Transposed Convolutions to upscale 4x4x4 -> 8x8x8 -> 16x16x16
+        # Use Transposed Convolutions with Normalization
         self.upsampler = nn.Sequential(
             nn.ConvTranspose3d(latent_dim, latent_dim, kernel_size=4, stride=2, padding=1),
-            nn.ReLU(),
+            nn.GroupNorm(8, latent_dim),
+            nn.GELU(),
             nn.ConvTranspose3d(latent_dim, latent_dim, kernel_size=4, stride=2, padding=1),
+            nn.GroupNorm(8, latent_dim),
+            nn.GELU(),
         )
         
         # Final layers for mean and logvar on the 16x16x16 grid
@@ -94,12 +97,14 @@ class SdfDecoder(nn.Module):
         super().__init__()
         self.resolution = resolution
         self.pos_emb = SinusoidalEmbedding(emb_dim)
-        # We'll use 3D convolution layers to process the latent grid before sampling
+        # We'll use 3D convolution layers with Norm and GELU for better latent extraction
         self.grid_processor = nn.Sequential(
             nn.Conv3d(latent_dim, latent_dim, kernel_size=3, padding=1),
-            nn.ReLU(),
+            nn.GroupNorm(8, latent_dim),
+            nn.GELU(),
             nn.Conv3d(latent_dim, latent_dim, kernel_size=3, padding=1),
-            nn.ReLU(),
+            nn.GroupNorm(8, latent_dim),
+            nn.GELU(),
         )
         # Removed Tanh activation to prevent vanishing gradients. Target SDFs should be clamped instead.
         self.net = MLP(
