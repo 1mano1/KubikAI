@@ -1,6 +1,6 @@
-# ![KubikAI Logo](KubikAI/logo/KubikAI-Logo.png) Kubik AI 2.0
+# ![KubikAI Logo](KubikAI/logo/KubikAI-Logo.png) KubikAI
 
-Kubik AI 2.0 is an advanced 3D generation AI designed for high-fidelity geometry and texture synthesis. This project is a complete evolution, utilizing a new architecture based on Signed Distance Functions (SDF) and Cross-Attention Flow models to achieve superior results.
+KubikAI is an advanced 3D generation AI designed for high-fidelity geometry and texture synthesis. This project is a complete evolution, utilizing a new architecture based on Signed Distance Functions (SDF) and Cross-Attention Flow models to achieve superior results.
 
 ## Key Features
 
@@ -37,7 +37,7 @@ This project is optimized for execution on Kaggle.
 2.  **Setup Notebook:**
     -   Create a new Kaggle Notebook.
     -   Add your two checkpoint datasets as input.
-    -   Clone this repository: `!git clone https://github.com/1mano1/Kubik-AI-2.0.git`
+    -   Clone this repository: `!git clone https://github.com/1mano1/KubikAI.git`
     -   Navigate into the repo: `%cd Kubik-AI-2.0`
     -   Install dependencies: `!pip install -r requirements.txt`
 
@@ -55,7 +55,9 @@ This project is optimized for execution on Kaggle.
 
 ## Credits and Acknowledgments
 
-Kubik AI 2.0 is a technical evolution that has been made possible thanks to the pioneering research of the **TRELLIS** team and their collaborators. This project is built upon the original concepts and architecture developed by them, extending their capabilities to reach new levels of fidelity in 3D generation.
+KubikAI is an independent project developed by **1mano1**, focused on pushing the boundaries of 3D generative AI. 
+
+While the core architecture is inspired by the pioneering work of the **TRELLIS** team, KubikAI introduces significant improvements in stability, data processing, and model efficiency. We acknowledge their research as a foundational pillar for this new, evolved implementation.
 
 ## License
 
