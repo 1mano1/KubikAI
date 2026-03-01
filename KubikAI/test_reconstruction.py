@@ -55,7 +55,7 @@ def main(args):
     # 1. Load VAE
     print(f"Loading VAE from {args.vae_ckpt}...")
     try:
-        vae = SdfVAE(latent_dim=256, num_points=16384, resolution=16)
+        vae = SdfVAE(latent_dim=128, num_points=16384, resolution=32)
         state_dict = torch.load(args.vae_ckpt, map_location='cpu')
         vae.load_state_dict(state_dict)
         vae.eval().to(device)

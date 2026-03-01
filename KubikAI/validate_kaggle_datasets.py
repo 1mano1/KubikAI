@@ -68,7 +68,7 @@ def validate_raw_meshes(data_dir, output_json, min_faces=1000, max_faces=500000)
     """
     print(f"Scanning for Mesh files in: {data_dir}")
     mesh_files = []
-    for ext in ['*.obj', '*.glb', '*.gltf', '*.fbx']:
+    for ext in ['*.obj', '*.glb', '*.gltf', '*.fbx', '*.ply']:
         mesh_files.extend(glob.glob(os.path.join(data_dir, '**', ext), recursive=True))
     
     valid_files = []

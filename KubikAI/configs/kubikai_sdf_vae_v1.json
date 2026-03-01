@@ -3,9 +3,9 @@
         "sdf_vae": {
             "name": "KubikAI.models.sdf_vae.SdfVAE",
             "args": {
-                "latent_dim": 256,
+                "latent_dim": 128,
                 "num_points": 16384,
-                "resolution": 16
+                "resolution": 32
             }
         }
     },
