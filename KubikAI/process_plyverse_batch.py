@@ -96,8 +96,7 @@ def main():
         results = list(tqdm(p.imap(process_single_model, tasks), total=len(tasks), desc="Converting to SDF"))
 
     success_count = sum(results)
-    print(f"
-Finished! Successfully processed {success_count} models.")
+    print(f"\nFinished! Successfully processed {success_count} models.")
     print(f"Files saved in: {args.output_dir}")
 
 if __name__ == "__main__":
