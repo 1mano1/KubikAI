@@ -48,6 +48,10 @@ class SdfDataset(Dataset):
             # Look for flat structure (Objaverse format)
             flat_files = glob(os.path.join(root, 'sdf_samples', '*.npz'), recursive=True)
             all_files.extend(flat_files)
+
+            # Look for *.npz files directly in the root (New fast Kaggle processing format)
+            direct_files = glob(os.path.join(root, '*.npz'))
+            all_files.extend(direct_files)
         
         if not all_files:
             raise ValueError(f"No SDF files found in the provided root directories: {self.roots}")
