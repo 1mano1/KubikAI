@@ -51,10 +51,17 @@ def mesh_to_sdf_samples(mesh_path, num_samples=32768):
 
 def process_single_model(args):
     mesh_path, output_dir = args
-    model_id = os.path.basename(os.path.dirname(mesh_path))
-    if not model_id or len(model_id) < 5: # fallback for flat structures
-        model_id = os.path.basename(mesh_path).split('.')[0]
-        
+    # Create a truly unique ID by combining the parent directory name and the filename
+    # e.g., "folder123_mesh.npz" to avoid collisions in flat or nested datasets
+    parent_dir = os.path.basename(os.path.dirname(mesh_path))
+    file_name = os.path.basename(mesh_path).split('.')[0]
+    
+    # If the parent dir is just 'models' or something generic, add a small hash of the path
+    import hashlib
+    path_hash = hashlib.md5(mesh_path.encode('utf-8')).hexdigest()[:6]
+    
+    model_id = f"{parent_dir}_{file_name}_{path_hash}"
+    
     save_path = os.path.join(output_dir, f"{model_id}.npz")
     
     if os.path.exists(save_path):
