@@ -53,8 +53,7 @@ def validate_sdf_dataset(data_dir, output_json, min_samples=16384):
     with open(output_json, 'w') as out_f:
         json.dump(manifest, out_f, indent=4)
         
-    print(f"
---- Validation Complete ---")
+    print(f"\n--- Validation Complete ---")
     print(f"Total Scanned: {len(sdf_files)}")
     print(f"Valid for Training: {len(valid_files)}")
     print(f"Corrupted: {len(corrupted_files)}")
@@ -68,7 +67,7 @@ def validate_raw_meshes(data_dir, output_json, min_faces=1000, max_faces=500000)
     """
     print(f"Scanning for Mesh files in: {data_dir}")
     mesh_files = []
-    for ext in ['*.obj', '*.glb', '*.gltf', '*.fbx']:
+    for ext in ['*.obj', '*.glb', '*.gltf', '*.fbx', '*.ply']:
         mesh_files.extend(glob.glob(os.path.join(data_dir, '**', ext), recursive=True))
     
     valid_files = []
@@ -106,8 +105,7 @@ def validate_raw_meshes(data_dir, output_json, min_faces=1000, max_faces=500000)
     with open(output_json, 'w') as out_f:
         json.dump(manifest, out_f, indent=4)
         
-    print(f"
---- Validation Complete ---")
+    print(f"\n--- Validation Complete ---")
     print(f"Total Scanned: {len(mesh_files)}")
     print(f"Valid for Pipeline: {len(valid_files)}")
     print(f"Corrupted/Unreadable: {len(corrupted_files)}")
