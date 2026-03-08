@@ -112,11 +112,9 @@ def main():
 
     # Search for .ply files in the nested structure
     print(f"Searching for models in {args.input_dir}...")
-    all_meshes = glob.glob(os.path.join(args.input_dir, "**", "*.ply"), recursive=True)
-    
-    if not all_meshes:
-        # Try .obj just in case
-        all_meshes = glob.glob(os.path.join(args.input_dir, "**", "*.obj"), recursive=True)
+    all_meshes = []
+    for ext in ["*.ply", "*.obj", "*.glb", "*.gltf"]:
+        all_meshes.extend(glob.glob(os.path.join(args.input_dir, "**", ext), recursive=True))
 
     print(f"Found {len(all_meshes)} models. Processing first {args.limit}...")
     all_meshes = all_meshes[:args.limit]
