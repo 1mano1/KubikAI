@@ -13,16 +13,18 @@
 - **Bloqueo Resuelto:** El script original de procesamiento tardaba 300 horas por problemas con `trimesh.proximity` y modelos rotos. 
 - **Solución Implementada:** Se reescribió `process_plyverse_batch.py` para usar `scipy.spatial.cKDTree` y matemáticas de Álgebra Vectorial (Dot Product con Vertex Normals) para obtener el "Pseudo-SDF". El tiempo de procesamiento pasó de 40 segundos a **~0.1 segundos por modelo** conservando el signo (+/-) necesario para la red neuronal.
 - **Dependencias Actualizadas:** `python-fcl` y `rtree` añadidos a `requirements.txt` para aceleración extrema de CPU.
-- **Ejecución Actual:** Kaggle está corriendo en segundo plano ("Save & Run All" en sesión de CPU) procesando **Plyverse Part 1 (30,000 modelos)**. 
+- **Ejecución Actual:** Kaggle está corriendo en segundo plano ("Save & Run All" en sesión de CPU) procesando **Plyverse Part 4**. 
 
 ## Archivos Clave y Rutas Futuras en Kaggle:
 - **Output Esperado Mañana:** `/kaggle/working/SuperDataset_SDF/plyverse_1` (Deberá ser convertido en un "Kaggle Dataset" privado).
 - **Ruta de Salida VAE v3:** `/kaggle/working/vae_training_genesis_v3`
 
-## Próximos Pasos Inmediatos (Para Mañana):
+## Próximos Pasos Inmediatos:
 
-### 1. Finalizar la "Fábrica de Datos" (Si es necesario)
-- Si no se encadenaron todas las partes en un solo notebook, crear notebooks adicionales en CPU (None) para procesar `Plyverse Part 2`, `Part 3`, `Part 4` y `Objaverse` usando el mismo script optimizado de la rama `v3`.
+### 1. Finalizar la "Fábrica de Datos"
+- **Completado:** `Plyverse Part 1, 2, 3`.
+- **En Proceso:** `Plyverse Part 4`.
+- **Siguiente Tarea:** Procesar el dataset **10k Objaverse Object** usando el script ahora compatible con múltiples formatos (`process_plyverse_batch.py` en la rama `v3`).
 
 ### 2. Entrenamiento Definitivo (KubikAI Genesis)
 - Crear un **nuevo notebook** con **Acelerador GPU T4 x2 o P100**.

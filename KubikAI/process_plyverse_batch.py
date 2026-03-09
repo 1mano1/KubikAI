@@ -112,9 +112,34 @@ def main():
 
     # Search for .ply files in the nested structure
     print(f"Searching for models in {args.input_dir}...")
+    
+    if not os.path.exists(args.input_dir):
+        print(f"⚠️ WARNING: The directory {args.input_dir} does NOT exist!")
+        print("💡 Hint: On Kaggle, dataset paths are usually /kaggle/input/<dataset-slug>/")
+        print("Check your dataset paths with '!ls /kaggle/input/'")
+    
     all_meshes = []
-    for ext in ["*.ply", "*.obj", "*.glb", "*.gltf"]:
-        all_meshes.extend(glob.glob(os.path.join(args.input_dir, "**", ext), recursive=True))
+    valid_extensions = {".ply", ".obj", ".glb", ".gltf"}
+    
+    # We also keep track of the first few files we see for debugging
+    debug_seen_files = []
+    
+    for root_dir, _, files in os.walk(args.input_dir, followlinks=True):
+        for file in files:
+            if len(debug_seen_files) < 10:
+                debug_seen_files.append(os.path.join(root_dir, file))
+                
+            ext = os.path.splitext(file)[1].lower()
+            if ext in valid_extensions:
+                all_meshes.append(os.path.join(root_dir, file))
+
+    if len(all_meshes) == 0:
+        print("\n❌ CRITICAL: Found 0 matching mesh files!")
+        print("Here are the first 10 files found in the directory (to check if extensions are missing or different):")
+        for f in debug_seen_files:
+            print(f"  - {f}")
+        print("\nIf your files don't have an extension like .glb, the script will need to be updated to load them based on file signatures or format guessing.")
+        return
 
     print(f"Found {len(all_meshes)} models. Processing first {args.limit}...")
     all_meshes = all_meshes[:args.limit]
