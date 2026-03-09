@@ -18,6 +18,9 @@ class BaseTrainer:
         self.i_save = i_save
         self.output_dir = output_dir
         self.step = 0
+        
+        self.load_dir = kwargs.get('load_dir', None)
+        self.resume_step = kwargs.get('resume_step', None)
 
         # Move models to GPU
         for name, model in self.models.items():
@@ -27,7 +30,7 @@ class BaseTrainer:
         self.init_optimizer()
         
         # Automatic Resume
-        self.resume()
+        self.resume(self.load_dir, self.resume_step)
 
         print("--- Simplified BaseTrainer Initialized ---")
         print(f"  - Models: {list(self.models.keys())}")
@@ -45,24 +48,52 @@ class BaseTrainer:
         model_params = sum([list(model.parameters()) for model in self.models.values()], [])
         self.optimizer = getattr(torch.optim, self.optimizer_config['name'])(model_params, **self.optimizer_config['args'])
 
-    def resume(self):
+    def resume(self, load_dir=None, resume_step=None):
         import glob
-        ckpt_dir = os.path.join(self.output_dir, 'ckpts')
+        
+        # Priority: explicit load_dir, then output_dir (for continuous local training)
+        base_dir = load_dir if load_dir else self.output_dir
+        
+        # Determine where checkpoints actually are
+        ckpt_dir = os.path.join(base_dir, 'ckpts')
         if not os.path.exists(ckpt_dir):
-            return
-        misc_files = sorted(glob.glob(os.path.join(ckpt_dir, 'misc_step*.pt')))
-        if not misc_files:
-            return
+            if os.path.exists(base_dir) and glob.glob(os.path.join(base_dir, 'misc_step*.pt')):
+                ckpt_dir = base_dir # The user pointed directly to the ckpts folder
+            else:
+                print(f"No checkpoint directory found at {ckpt_dir} or {base_dir}. Starting fresh.")
+                return
+
+        if resume_step is not None:
+            misc_files = [os.path.join(ckpt_dir, f'misc_step{resume_step:07d}.pt')]
+            if not os.path.exists(misc_files[0]):
+                print(f"Warning: Specific resume_step {resume_step} requested but not found at {misc_files[0]}.")
+                return
+        else:
+            misc_files = sorted(glob.glob(os.path.join(ckpt_dir, 'misc_step*.pt')))
+            if not misc_files:
+                print(f"No misc_step*.pt files found in {ckpt_dir}. Starting fresh.")
+                return
+
         latest_misc = misc_files[-1]
         print(f"Found existing checkpoint: {latest_misc}")
-        misc_ckpt = torch.load(latest_misc, map_location='cuda')
-        self.step = misc_ckpt['step']
-        self.optimizer.load_state_dict(misc_ckpt['optimizer'])
-        for name in self.models.keys():
-            model_path = os.path.join(ckpt_dir, f'{name}_step{self.step:07d}.pt')
-            if os.path.exists(model_path):
-                print(f"Loading model weight: {model_path}")
-                self.models[name].load_state_dict(torch.load(model_path, map_location='cuda'))
+        
+        try:
+            misc_ckpt = torch.load(latest_misc, map_location='cuda')
+            self.step = misc_ckpt['step']
+            self.optimizer.load_state_dict(misc_ckpt['optimizer'])
+            
+            for name in self.models.keys():
+                model_path = os.path.join(ckpt_dir, f'{name}_step{self.step:07d}.pt')
+                if os.path.exists(model_path):
+                    print(f"Loading model weight: {model_path}")
+                    self.models[name].load_state_dict(torch.load(model_path, map_location='cuda'))
+                else:
+                    print(f"Warning: Expected model weight {model_path} not found!")
+            print(f"Successfully resumed from step {self.step}.")
+        except Exception as e:
+            print(f"Failed to load checkpoint {latest_misc}. Error: {e}")
+            print("Starting fresh.")
+            self.step = 0
 
     def get_next_batch(self):
         try:

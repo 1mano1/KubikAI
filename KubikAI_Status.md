@@ -10,10 +10,8 @@
 - **Flow Model (Textura/Detalle):** En espera del VAE final.
 
 ## Estado de Procesamiento del "Super Dataset" (Kaggle)
-- **Bloqueo Resuelto:** El script original de procesamiento tardaba 300 horas por problemas con `trimesh.proximity` y modelos rotos. 
-- **Solución Implementada:** Se reescribió `process_plyverse_batch.py` para usar `scipy.spatial.cKDTree` y matemáticas de Álgebra Vectorial (Dot Product con Vertex Normals) para obtener el "Pseudo-SDF". El tiempo de procesamiento pasó de 40 segundos a **~0.1 segundos por modelo** conservando el signo (+/-) necesario para la red neuronal.
-- **Dependencias Actualizadas:** `python-fcl` y `rtree` añadidos a `requirements.txt` para aceleración extrema de CPU.
-- **Ejecución Actual:** Kaggle está corriendo en segundo plano ("Save & Run All" en sesión de CPU) procesando **Plyverse Part 4**. 
+- **FÁBRICA DE DATOS COMPLETADA (100%):** Se procesaron con éxito ~120,000 modelos de Plyverse (Parts 1, 2, 3 y 4). Esta cantidad es más del doble de la usada en benchmarks históricos (ShapeNet ~51k) y es el volumen óptimo para los límites de cómputo de Kaggle sin caer en tiempos de entrenamiento inmanejables.
+- **Objaverse Descartado:** El dataset `10k-objaverse-object` en Kaggle resultó contener imágenes 2D (renders y poses) en lugar de geometría 3D real, por lo que no es apto para extraer SDF. Se omite para pasar directo al entrenamiento.
 
 ## Archivos Clave y Rutas Futuras en Kaggle:
 - **Output Esperado Mañana:** `/kaggle/working/SuperDataset_SDF/plyverse_1` (Deberá ser convertido en un "Kaggle Dataset" privado).
@@ -21,15 +19,11 @@
 
 ## Próximos Pasos Inmediatos:
 
-### 1. Finalizar la "Fábrica de Datos"
-- **Completado:** `Plyverse Part 1, 2, 3`.
-- **En Proceso:** `Plyverse Part 4`.
-- **Siguiente Tarea:** Procesar el dataset **10k Objaverse Object** usando el script ahora compatible con múltiples formatos (`process_plyverse_batch.py` en la rama `v3`).
-
-### 2. Entrenamiento Definitivo (KubikAI Genesis)
+### 1. Entrenamiento Definitivo (KubikAI Genesis)
 - Crear un **nuevo notebook** con **Acelerador GPU T4 x2 o P100**.
 - Importar los Kaggle Datasets (los `.npz` procesados de Plyverse) como "Data".
-- Ejecutar el comando para iniciar el entrenamiento desde cero:
+- **NOTA:** El sistema de reanudación de Checkpoints en `base_trainer.py` ha sido arreglado para Kaggle. Ahora respeta explícitamente el parámetro `--load_dir` para buscar la carpeta `ckpts/` (vital ya que Kaggle borra `/kaggle/working/` en cada reinicio).
+- Ejecutar el comando para iniciar el entrenamiento:
   ```bash
   !git clone -b v3 https://github.com/1mano1/Kubik-AI-2.0.git
   %cd Kubik-AI-2.0
