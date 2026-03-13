@@ -49,9 +49,12 @@ class SdfDataset(Dataset):
             flat_files = glob(os.path.join(root, 'sdf_samples', '*.npz'), recursive=True)
             all_files.extend(flat_files)
 
-            # Look for *.npz files directly in the root (New fast Kaggle processing format)
-            direct_files = glob(os.path.join(root, '*.npz'))
-            all_files.extend(direct_files)
+            # Look for *.npz files recursively in any subfolder (Kaggle processing format)
+            recursive_npz = glob(os.path.join(root, '**', '*.npz'), recursive=True)
+            all_files.extend(recursive_npz)
+        
+        # Remove duplicates while preserving order
+        all_files = list(dict.fromkeys(all_files))
         
         if not all_files:
             raise ValueError(f"No SDF files found in the provided root directories: {self.roots}")

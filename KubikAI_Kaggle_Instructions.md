@@ -4,7 +4,7 @@ Este documento contiene las rutas exactas, comandos y pasos necesarios para entr
 
 ## Rutas Importantes en Kaggle
 
-*   **Dataset Procesado:** `/kaggle/input/datasets/imanolr11/kubikai-training-data/KubikAI_Processed/processed_datasets`
+*   **Dataset Procesado:** `/kaggle/input/datasets/imanolr11/kubikai-3d-sdf-dataset`
 *   **Salida VAE (Versión 2):** `/kaggle/working/vae_training_output_v2`
 
 ---
@@ -17,7 +17,7 @@ Has decidido continuar el entrenamiento del VAE funcional (v2) para mejorar su c
 Ejecuta esto en la primera celda:
 
 ```bash
-!git clone https://github.com/1mano1/Kubik-AI-2.0.git
+!git clone -b v3 https://github.com/1mano1/Kubik-AI-2.0.git
 %cd Kubik-AI-2.0
 !pip install -r requirements.txt
 ```
@@ -29,7 +29,7 @@ Este comando carga tu checkpoint exitoso del paso 10,000 y continúa el entrenam
 Si estás en la **misma sesión** donde entrenaste los primeros 10k pasos:
 
 ```bash
-!python KubikAI/train_vae.py --config KubikAI/configs/kubikai_sdf_vae_v1.json --output_dir /kaggle/working/vae_training_output_v2 --data_dir /kaggle/input/datasets/imanolr11/kubikai-training-data/KubikAI_Processed/processed_datasets --load_dir /kaggle/working/vae_training_output_v2 --resume_step 10000
+!python KubikAI/train_vae.py --config KubikAI/configs/kubikai_sdf_vae_v1.json --output_dir /kaggle/working/vae_training_output_v2 --data_dir /kaggle/input/datasets/imanolr11/kubikai-3d-sdf-dataset --load_dir /kaggle/working/vae_training_output_v2 --resume_step 10000
 ```
 
 > **Nota Crítica:** Si has reiniciado la sesión de Kaggle, los archivos en `/kaggle/working/` se habrán borrado. Necesitarás volver a subir el archivo `vae_step0010000.pt` a una carpeta, y apuntar `--load_dir` a esa carpeta.
@@ -40,7 +40,7 @@ Si estás en la **misma sesión** donde entrenaste los primeros 10k pasos:
 
 ### Iniciar Entrenamiento desde Cero (Nueva Arquitectura)
 ```bash
-!python KubikAI/train_vae.py --config KubikAI/configs/kubikai_sdf_vae_v1.json --output_dir /kaggle/working/vae_training_output_v2 --data_dir /kaggle/input/datasets/imanolr11/kubikai-training-data/KubikAI_Processed/processed_datasets
+!python KubikAI/train_vae.py --config KubikAI/configs/kubikai_sdf_vae_v1.json --output_dir /kaggle/working/vae_training_output_v2 --data_dir /kaggle/input/datasets/imanolr11/kubikai-3d-sdf-dataset
 ```
 
 ### Depuración / Prueba
